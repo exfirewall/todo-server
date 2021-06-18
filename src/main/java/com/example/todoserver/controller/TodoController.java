@@ -5,6 +5,7 @@ import com.example.todoserver.model.TodoReq;
 import com.example.todoserver.model.TodoRes;
 import com.example.todoserver.service.TodoService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @CrossOrigin
 @AllArgsConstructor
 @RestController
@@ -21,7 +23,7 @@ public class TodoController {
 
     @PostMapping
     public ResponseEntity<TodoRes> create(@RequestBody TodoReq request){
-        System.out.println("Create");
+        log.info("Create");
 
         if(ObjectUtils.isEmpty(request.getTitle()))
             return ResponseEntity.badRequest().build();
@@ -37,38 +39,35 @@ public class TodoController {
 
     @GetMapping("{id}")
     public ResponseEntity<TodoRes> readOne(@PathVariable Long id){
-        System.out.println("READ One");
+        log.info("READ One");
         TodoEntity result = this.todoService.searchById(id);
         return ResponseEntity.ok(new TodoRes(result));
     }
 
     @GetMapping
     public ResponseEntity<List<TodoRes>> readAll(){
-        System.out.println("READ ALL");
+        log.info("READ ALL");
         List<TodoEntity> list = this.todoService.sarchAll();
-        for (TodoEntity todoList : list){
-            System.out.println(list);
-        }
         List<TodoRes> response = list.stream().map(TodoRes::new)
                                                 .collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
     @PatchMapping("{id}")
     public ResponseEntity<TodoRes> update(@PathVariable Long id, @RequestBody TodoReq request){
-        System.out.println("UPDATE");
+        log.info("UPDATE");
 
         TodoEntity result = this.todoService.updateById(id, request);
         return ResponseEntity.ok(new TodoRes(result));
     }
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteOne(@PathVariable Long id){
-        System.out.println("DELETE ONE");
+        log.info("DELETE ONE");
         this.todoService.deleteById(id);
         return ResponseEntity.ok().build();
     }
     @DeleteMapping
     public ResponseEntity<?> deleteAll(){
-        System.out.println("DELETE All");
+        log.info("DELETE All");
         this.todoService.deleteAll();
         return ResponseEntity.ok().build();
     }
